@@ -1,4 +1,4 @@
-import { BookOpen, Calendar, ChartColumn, FileQuestion, GalleryVerticalEnd, Inbox, LayoutDashboard, Search, Settings, UsersRound } from "lucide-react"
+import { BookOpen, Calendar, ChartColumn, FileQuestion, GalleryVerticalEnd, Inbox, LayoutDashboard, Medal, Search, Settings, UsersRound } from "lucide-react"
 import React from 'react'
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarSeparator } from './ui/sidebar'
 import LearnifyLogo from '@/assets/logo/logo.png';
@@ -9,29 +9,35 @@ import { NavUser } from "./NavUser";
 const items = [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: LayoutDashboard,
     },
     {
       title: "Content",
-      url: "#",
+      url: "/content",
       icon: BookOpen,
     },
     {
       title: "Users",
-      url: "#",
+      url: "/users",
       icon: UsersRound ,
     },
     {
       title: "Quizzes",
-      url: "#",
+      url: "/quiz",
       icon: FileQuestion,
     },
     {
+      title: "Achievements",
+      url: "/achievements",
+      icon: Medal,
+    },
+    {
       title: "Analytics",
-      url: "#",
+      url: "/analytics",
       icon: ChartColumn,
     },
+    
   ]
 
   const user= {
