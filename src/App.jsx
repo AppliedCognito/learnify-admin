@@ -6,6 +6,7 @@ import ContentPage from './pages/ContentPage';
 import UserPage from './pages/UserPage';
 import QuizPage from './pages/QuizPage';
 import Analyticspage from './pages/Analyticspage';
+import AchievementsPage from './pages/AchievementsPage';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
           <Route path='/users' element={<UserPage/>}/>
           <Route path='/quiz' element={<QuizPage/>}/>
           <Route path='/analytics' element={<Analyticspage/>}/>  
+          <Route path='/achievements' element={<AchievementsPage/>}/>  
         </Route>
       
       </Routes>

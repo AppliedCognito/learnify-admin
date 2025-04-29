@@ -15,8 +15,8 @@ const MainLayout = () => {
         <AppSidebar/>
         <SidebarInset>
         <main>
-          <header className='h-16 w-full'>
-            <div className="h-8 w-full flex items-center">
+          <header className='flex h-16 shrink-0 items-center gap-2 border-b'>
+            <div className="flex items-center gap-2 px-3">
               <SidebarTrigger/>
               <Separator
                 orientation="vertical"
