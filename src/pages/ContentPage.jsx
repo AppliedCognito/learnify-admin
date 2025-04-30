@@ -22,9 +22,7 @@ const ContentPage = () => {
       </Button>
       <Button className='bg-[#F5F5F5] text-black hover:bg-white'>
         <ScanText/> Import
-
       </Button>
-
      </div>
      <DataTableDemo/>
     </div>
