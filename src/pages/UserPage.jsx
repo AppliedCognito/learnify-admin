@@ -15,9 +15,7 @@ const UserPage = () => {
           <ScanText/> Import
         </Button>
       </div>
-
-      <UserTableDemo/>
-      
+      <UserTableDemo/>     
     </div>
   )
 }
