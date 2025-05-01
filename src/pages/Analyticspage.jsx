@@ -1,8 +1,11 @@
+import BuildingCard from '@/components/BuildingCard'
 import React from 'react'
 
 const Analyticspage = () => {
   return (
-    <div>Analyticspage</div>
+    <div className='h-screen w-full flex justify-center items-center'>
+      <BuildingCard/>
+    </div>
   )
 }
 

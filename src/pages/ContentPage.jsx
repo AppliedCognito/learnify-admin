@@ -7,7 +7,7 @@ import React from 'react'
 
 const ContentPage = () => {
   return (
-    <div className='h-full w-full  p-10'>
+    <div className='h-full w-full lg:p-10 p-5'>
      <div className="h-auto w-full flex flex-wrap gap-4">
       <FolderComponent/>
       <FolderComponent/>
@@ -22,9 +22,7 @@ const ContentPage = () => {
       </Button>
       <Button className='bg-[#F5F5F5] text-black hover:bg-white'>
         <ScanText/> Import
-
       </Button>
-
      </div>
      <DataTableDemo/>
     </div>
