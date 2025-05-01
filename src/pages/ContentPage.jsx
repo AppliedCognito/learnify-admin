@@ -1,8 +1,9 @@
-import AddFolderComponent from '@/components/contentComponents/AddFolderComponent'
+import AddNewModule from '@/components/AddNewModule'
+import FinalFolderComponent from '@/components/contentComponents/FinalFolderComponent'
 import FolderComponent from '@/components/contentComponents/FolderComponent'
 import { DataTableDemo } from '@/components/DataTableDemo'
 import { Button } from '@/components/ui/button'
-import { Plus, Scan, ScanText } from 'lucide-react'
+import { Plus, ScanText } from 'lucide-react'
 import React from 'react'
 
 const ContentPage = () => {
@@ -12,9 +13,8 @@ const ContentPage = () => {
       <FolderComponent/>
       <FolderComponent/>
       <FolderComponent/>
-      <FolderComponent/>
-      <FolderComponent/>
-      <AddFolderComponent/>
+      <FinalFolderComponent/>
+      <AddNewModule/>
      </div>
      <div className="h-auto mt-10 w-full flex justify-end items-end gap-2">
       <Button>
@@ -24,6 +24,7 @@ const ContentPage = () => {
         <ScanText/> Import
       </Button>
      </div>
+     
      <DataTableDemo/>
     </div>
   )
