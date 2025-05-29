@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Plus, ScanText } from 'lucide-react'
 import React from 'react'
 
+
 const ContentPage = () => {
   return (
     <div className='h-full w-full lg:p-10 p-5'>
@@ -25,7 +26,9 @@ const ContentPage = () => {
       
      </div>
      
+     
      <DataTableDemo/>
+     
     </div>
   )
 }
