@@ -1,10 +1,16 @@
 import AddNewModule from '@/components/AddNewModule'
+import AddQuestion from '@/components/contentComponents/AddQuestion'
 import FinalFolderComponent from '@/components/contentComponents/FinalFolderComponent'
 import FolderComponent from '@/components/contentComponents/FolderComponent'
 import ImportBtn from '@/components/contentComponents/importBtn'
+import MainInput from '@/components/contentComponents/MainInput'
+import SelectBtn from '@/components/contentComponents/SelectBtn'
+import SelectInput from '@/components/contentComponents/SelectInput'
+import UploadInput from '@/components/contentComponents/UploadInput'
 import { DataTableDemo } from '@/components/DataTableDemo'
 import { Button } from '@/components/ui/button'
-import { Plus, ScanText } from 'lucide-react'
+import { Select } from '@radix-ui/react-select'
+import {ImageUp, Plus } from 'lucide-react'
 import React from 'react'
 
 
@@ -19,15 +25,14 @@ const ContentPage = () => {
       <AddNewModule/>
      </div>
      <div className="h-auto mt-10 w-full flex justify-end items-end gap-2">
-      <Button>
-        <Plus color='white' /> Create hai
-      </Button>
+      <AddQuestion/>
       <ImportBtn/>
       
      </div>
      
      
      <DataTableDemo/>
+     
      
     </div>
   )
