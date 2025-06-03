@@ -10,8 +10,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
 
+import { getQuestions } from "@/api/adminApi"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -20,7 +22,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -33,110 +34,68 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-const data = [
-  {
-    id: "q1",
-    question: "What is a closure in JavaScript?",
-    imgUrl: "https://example.com/closure.png",
-    module: "JavaScript",
-    subModule: "Functions",
-    year: 2022,
-    difficulty: "Medium",
-    tags: "closure,function,scope",
-  },
-  {
-    id: "q2",
-    question: "Explain prototypal inheritance.",
-    imgUrl: "https://example.com/prototype.png",
-    module: "JavaScript",
-    subModule: "Objects",
-    year: 2021,
-    difficulty: "Hard",
-    tags: "prototype,inheritance,oop",
-  },
-  {
-    id: "q3",
-    question: "Define React useState hook.",
-    imgUrl: "https://example.com/usestate.png",
-    module: "React",
-    subModule: "Hooks",
-    year: 2023,
-    difficulty: "Easy",
-    tags: "react,hook,state",
-  },
-]
-
+// Define columns with respect to API data
 export const columns = [
-    {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
   {
-    accessorKey: "question",
-    header: "Question",
-    cell: ({ row }) => <div>{row.getValue("question")}</div>,
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
   },
   {
-    accessorKey: "imgUrl",
-    header: "IMG url",
+    accessorKey: "text",
+    header: "Question",
+    cell: ({ row }) => <div>{row.getValue("text")}</div>,
+  },
+  {
+    accessorKey: "options",
+    header: "Options",
     cell: ({ row }) => {
-      const url = row.getValue("imgUrl")
+      const options = row.original.options
       return (
-        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-          View Image
-        </a>
+        <ul className="list-disc pl-5 space-y-1">
+          {options.map((opt) => (
+            <li
+              key={opt._id}
+              className={
+                opt._id === row.original.correct_option_id
+                  ? "font-semibold text-green-600"
+                  : ""
+              }
+            >
+              {opt.option_text}
+            </li>
+          ))}
+        </ul>
       )
     },
   },
   {
-    accessorKey: "module",
-    header: "Module",
-    cell: ({ row }) => <div>{row.getValue("module")}</div>,
-  },
-  {
-    accessorKey: "subModule",
-    header: "Sub module",
-    cell: ({ row }) => <div>{row.getValue("subModule")}</div>,
-  },
-  {
-    accessorKey: "year",
-    header: "Year",
-    cell: ({ row }) => <div>{row.getValue("year")}</div>,
-  },
-  {
-    accessorKey: "difficulty",
-    header: "Difficulty",
-    cell: ({ row }) => <div>{row.getValue("difficulty")}</div>,
-  },
-  {
-    accessorKey: "tags",
-    header: "Tags",
-    cell: ({ row }) => <div>{row.getValue("tags")}</div>,
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => new Date(row.getValue("createdAt")).toLocaleDateString(),
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
-  
+      const question = row.original
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -147,29 +106,38 @@ export const columns = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log("Edit", payment.id)}>
+            <DropdownMenuItem onClick={() => console.log("Edit", question._id)}>
               <Edit className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => console.log("Delete", payment.id)}>
+            <DropdownMenuItem onClick={() => console.log("Delete", question._id)}>
               <Trash2 className="mr-2 h-4 w-4 text-red-500" />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      );
+      )
     },
-  }
-  
+  },
 ]
 
 export function DataTableDemo() {
+  const {
+    data: questions = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["questions"],
+    queryFn: getQuestions,
+  })
+
   const [sorting, setSorting] = React.useState([])
   const [columnFilters, setColumnFilters] = React.useState([])
   const [columnVisibility, setColumnVisibility] = React.useState({})
   const [rowSelection, setRowSelection] = React.useState({})
+
   const table = useReactTable({
-    data,
+    data: questions || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -192,9 +160,9 @@ export function DataTableDemo() {
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter questions..."
-          value={table.getColumn("question")?.getFilterValue() ?? ""}
+          value={table.getColumn("text")?.getFilterValue() ?? ""}
           onChange={(event) =>
-            table.getColumn("question")?.setFilterValue(event.target.value)
+            table.getColumn("text")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -242,7 +210,19 @@ export function DataTableDemo() {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  Loading...
+                </TableCell>
+              </TableRow>
+            ) : isError ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="text-center">
+                  Failed to load questions.
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -250,20 +230,14 @@ export function DataTableDemo() {
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
