@@ -28,11 +28,8 @@ const ContentPage = () => {
   return (
     <div className='h-full w-full lg:p-10 p-5'>
      <div className="h-auto w-full flex flex-wrap gap-4 items-start">
-    {/* <FolderComponent/>
-    <FolderComponent/>
-    <FolderComponent/> */}
     {papers?.map((paper) => (
-      <FinalFolderComponent key={paper._id} paperName={paper.name}/>
+      <FinalFolderComponent key={paper._id} paper={paper}/>
     ))}
       
       <AddNewModule/>
