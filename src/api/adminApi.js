@@ -5,9 +5,18 @@ const getPapers = async () => {
     return response.data;
 };
 
+const getSubjects = async () => {
+    const response = await apiClient.get(`/subjects`);
+    return response.data;
+};
+
 const getQuestions = async () => {
     const response = await apiClient.get('/questions');
     return response.data;
 };
 
-export { getPapers, getQuestions };
+export { 
+    getPapers,
+    getQuestions,
+    getSubjects
+};

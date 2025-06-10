@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
   Select,
   SelectContent,
@@ -7,26 +7,26 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
-const SelectBtn = ({sampleSelectLabel}) => {
+const SelectBtn = ({ sampleSelectLabel, options = [], value, onChange }) => {
   return (
-    <Select>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder={sampleSelectLabel} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>{sampleSelectLabel}</SelectLabel>
-          <SelectItem value="apple">Apple</SelectItem>
-          <SelectItem value="banana">Banana</SelectItem>
-          <SelectItem value="blueberry">Blueberry</SelectItem>
-          <SelectItem value="grapes">Grapes</SelectItem>
-          <SelectItem value="pineapple">Pineapple</SelectItem>
+          {options.map((option, idx) => (
+            <SelectItem key={idx} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
         </SelectGroup>
       </SelectContent>
     </Select>
-  )
-}
+  );
+};
 
-export default SelectBtn
+export default SelectBtn;
