@@ -7,10 +7,12 @@ import UserPage from './pages/UserPage';
 import QuizPage from './pages/QuizPage';
 import Analyticspage from './pages/Analyticspage';
 import AchievementsPage from './pages/AchievementsPage';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
   return (
+    <>
     <Router>
       <Routes>
         <Route path='/' element={<MainLayout/>}>
@@ -25,7 +27,8 @@ function App() {
       
       </Routes>
     </Router>
-
+    <ToastContainer position="bottom-right" autoClose={3000} />
+    </>
   )
 }
 

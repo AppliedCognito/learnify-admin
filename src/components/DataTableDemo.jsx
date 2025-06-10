@@ -34,8 +34,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-// Define columns with respect to API data
-export const columns = [
+import { useDeleteQuestion } from "@/hooks/questionHook"
+
+
+export function DataTableDemo() {
+  const columns = [
   {
     id: "select",
     header: ({ table }) => (
@@ -92,36 +95,41 @@ export const columns = [
     cell: ({ row }) => new Date(row.getValue("createdAt")).toLocaleDateString(),
   },
   {
-    id: "actions",
-    enableHiding: false,
-    cell: ({ row }) => {
-      const question = row.original
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log("Edit", question._id)}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => console.log("Delete", question._id)}>
-              <Trash2 className="mr-2 h-4 w-4 text-red-500" />
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    accessorKey: "correct_option_id",
+    header: "Correct Option ID",
+    cell: ({ row }) => <div>{row.getValue("correct_option_id")}</div>,
+  },
+  {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const question = row.original;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => console.log("Edit", question._id)}>
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => deleteQuestionMutation.mutate(question._id)}
+              >
+                <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
   },
 ]
-
-export function DataTableDemo() {
   const {
     data: questions = [],
     isLoading,
@@ -135,6 +143,8 @@ export function DataTableDemo() {
   const [columnFilters, setColumnFilters] = React.useState([])
   const [columnVisibility, setColumnVisibility] = React.useState({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const deleteQuestionMutation = useDeleteQuestion();
+
 
   const table = useReactTable({
     data: questions || [],
