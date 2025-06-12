@@ -27,14 +27,14 @@ const useAddModule = () => {
   });
 };
 
-// Update a module by ID (only name is required)
+// Update a module by ID (name and subject_id are required)
 const useUpdateModule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, name }) =>
+    mutationFn: ({ id, name, subject_id }) =>
       toast.promise(
-        apiClient.put(`/modules/${id}`, { name }).then(res => res.data),
+        apiClient.put(`/modules/${id}`, { name, subject_id }).then(res => res.data),
         {
           pending: 'Updating module...',
           success: 'Module updated successfully!',
@@ -50,6 +50,7 @@ const useUpdateModule = () => {
     },
   });
 };
+
 
 // Delete a module by ID
 const useDeleteModule = () => {

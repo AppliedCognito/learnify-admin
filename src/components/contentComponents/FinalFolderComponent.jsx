@@ -12,7 +12,7 @@ import { FolderPen, Trash } from 'lucide-react'
 
 
 
-const FinalFolderComponent = ({ paper, onClick }) => {
+const FinalFolderComponent = ({ paper, onClick, type = "paper", parentId }) => {
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -36,10 +36,20 @@ const FinalFolderComponent = ({ paper, onClick }) => {
         </ContextMenuContent>
       </ContextMenu>
 
-      <RenameModule open={renameOpen} setOpen={setRenameOpen} paper={paper} />
-      <DeleteModule open={deleteOpen} setOpen={setDeleteOpen} paper={paper} />
+      <RenameModule
+        open={renameOpen}
+        setOpen={setRenameOpen}
+        paper={paper}
+        type={type}
+        parentId={parentId}
+      />
+      <DeleteModule
+        open={deleteOpen}
+        setOpen={setDeleteOpen}
+        paper={paper}
+        type={type}
+      />
     </>
-  );
-};
-
-export default FinalFolderComponent
+  )
+}
+export default FinalFolderComponent;

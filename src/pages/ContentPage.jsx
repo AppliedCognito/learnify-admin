@@ -7,12 +7,10 @@ import {
   getsSubModule,
 } from '@/api/adminApi'
 
+import FinalFolderComponent from '@/components/contentComponents/FinalFolderComponent'
 import AddNewModule from '@/components/AddNewModule'
 import AddQuestion from '@/components/contentComponents/AddQuestion'
-import FinalFolderComponent from '@/components/contentComponents/FinalFolderComponent'
-import FolderComponent from '@/components/contentComponents/FolderComponent'
 import ImportBtn from '@/components/contentComponents/importBtn'
-import { DataTableDemo } from '@/components/DataTableDemo'
 
 import {
   Breadcrumb,
@@ -27,71 +25,40 @@ const ContentPage = () => {
   const [selectedSubject, setSelectedSubject] = useState(null)
   const [selectedModule, setSelectedModule] = useState(null)
 
-  const {
-    data: papers,
-    isLoading: isPapersLoading,
-    isError: isPapersError,
-    error: papersError,
-  } = useQuery({
+  const { data: papers, isLoading: isPapersLoading, isError: isPapersError, error: papersError } = useQuery({
     queryKey: ['papers'],
     queryFn: getPapers
   })
 
-  const {
-    data: subjects,
-    isLoading: isSubjectsLoading,
-    isError: isSubjectsError,
-    error: subjectsError,
-  } = useQuery({
+  const { data: subjects, isLoading: isSubjectsLoading, isError: isSubjectsError, error: subjectsError } = useQuery({
     queryKey: ['subjects', selectedPaper?._id],
-    queryFn: () => {
-      if (!selectedPaper?._id) return Promise.resolve([])
-      return getSubjects(selectedPaper._id)
-    },
+    queryFn: () => selectedPaper ? getSubjects(selectedPaper._id) : Promise.resolve([]),
     enabled: !!selectedPaper
   })
 
-  const {
-    data: modules,
-    isLoading: isModulesLoading,
-    isError: isModulesError,
-    error: modulesError,
-  } = useQuery({
+  const { data: modules, isLoading: isModulesLoading, isError: isModulesError, error: modulesError } = useQuery({
     queryKey: ['modules', selectedSubject?._id],
-    queryFn: () => {
-      if (!selectedSubject?._id) return Promise.resolve([])
-      return getModules(selectedSubject._id)
-    },
+    queryFn: () => selectedSubject ? getModules(selectedSubject._id) : Promise.resolve([]),
     enabled: !!selectedSubject
   })
 
-  const {
-    data: submodules,
-    isLoading: isSubmodulesLoading,
-    isError: isSubmodulesError,
-    error: submodulesError,
-  } = useQuery({
+  const { data: submodules, isLoading: isSubmodulesLoading, isError: isSubmodulesError, error: submodulesError } = useQuery({
     queryKey: ['submodules', selectedModule?._id],
-    queryFn: () => {
-      if (!selectedModule?._id) return Promise.resolve([])
-      return getsSubModule(selectedModule._id)
-    },
+    queryFn: () => selectedModule ? getsSubModule(selectedModule._id) : Promise.resolve([]),
     enabled: !!selectedModule
   })
 
-  const handlePaperClick = (paper) => {
-    setSelectedPaper(paper)
-    setSelectedSubject(null)
-    setSelectedModule(null)
-  }
-
-  const handleSubjectClick = (subject) => {
-    setSelectedSubject(subject)
-    setSelectedModule(null)
-  }
-
-  const handleModuleClick = (module) => {
-    setSelectedModule(module)
+  const handleClick = (item, type) => {
+    if (type === 'paper') {
+      setSelectedPaper(item)
+      setSelectedSubject(null)
+      setSelectedModule(null)
+    } else if (type === 'subject') {
+      setSelectedSubject(item)
+      setSelectedModule(null)
+    } else if (type === 'module') {
+      setSelectedModule(item)
+    }
   }
 
   const renderBreadcrumb = () => (
@@ -164,7 +131,8 @@ const ContentPage = () => {
         <FinalFolderComponent
           key={paper._id}
           paper={paper}
-          onClick={() => handlePaperClick(paper)}
+          onClick={() => handleClick(paper, 'paper')}
+          type="paper"
         />
       ))
     }
@@ -174,10 +142,12 @@ const ContentPage = () => {
 
     if (!selectedSubject) {
       return subjects?.map(subject => (
-        <FolderComponent
+        <FinalFolderComponent
           key={subject._id}
-          paperName={subject.name}
-          onClick={() => handleSubjectClick(subject)}
+          paper={subject}
+          onClick={() => handleClick(subject, 'subject')}
+          type="subject"
+          parentId={selectedPaper?._id}
         />
       ))
     }
@@ -187,10 +157,12 @@ const ContentPage = () => {
 
     if (!selectedModule) {
       return modules?.map(module => (
-        <FolderComponent
+        <FinalFolderComponent
           key={module._id}
-          paperName={module.name}
-          onClick={() => handleModuleClick(module)}
+          paper={module}
+          onClick={() => handleClick(module, 'module')}
+          type="module"
+          parentId={selectedSubject?._id}
         />
       ))
     }
@@ -199,7 +171,12 @@ const ContentPage = () => {
     if (isSubmodulesError) return <div>Error loading submodules: {submodulesError.message}</div>
 
     return submodules?.map(sub => (
-      <FolderComponent key={sub._id} paperName={sub.name} />
+      <FinalFolderComponent
+        key={sub._id}
+        paper={sub}
+        type="submodule"
+        parentId={selectedModule?._id}
+      />
     ))
   }
 
@@ -213,13 +190,11 @@ const ContentPage = () => {
           selectedSubject={selectedSubject}
           selectedModule={selectedModule}
         />
-
       </div>
       <div className="h-auto mt-10 w-full flex justify-end items-end gap-2">
         <AddQuestion />
         <ImportBtn />
       </div>
-      {/* <DataTableDemo /> */}
     </div>
   )
 }
