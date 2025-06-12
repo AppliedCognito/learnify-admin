@@ -208,7 +208,12 @@ const ContentPage = () => {
       {renderBreadcrumb()}
       <div className="h-auto w-full flex flex-wrap gap-4 items-start">
         {renderFolders()}
-        <AddNewModule />
+        <AddNewModule
+          selectedPaper={selectedPaper}
+          selectedSubject={selectedSubject}
+          selectedModule={selectedModule}
+        />
+
       </div>
       <div className="h-auto mt-10 w-full flex justify-end items-end gap-2">
         <AddQuestion />
