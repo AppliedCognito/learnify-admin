@@ -11,7 +11,8 @@ import RenameModule from '../RenameModule'
 import { FolderPen, Trash } from 'lucide-react'
 
 
-const FinalFolderComponent = ({ paper }) => {
+
+const FinalFolderComponent = ({ paper, onClick }) => {
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -19,7 +20,9 @@ const FinalFolderComponent = ({ paper }) => {
     <>
       <ContextMenu>
         <ContextMenuTrigger>
-          <FolderComponent paperName={paper.name} />
+          <div onClick={onClick}>
+            <FolderComponent paperName={paper.name} />
+          </div>
         </ContextMenuTrigger>
         <ContextMenuContent>
           <ContextMenuItem className="flex gap-2" onClick={() => setRenameOpen(true)}>

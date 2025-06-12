@@ -53,7 +53,7 @@ const AddQuestion = () => {
           <Plus /> Add New Question
         </Button>
       </DialogTrigger>
-      <DialogContent className="w-full !max-w-[70vw] flex flex-col justify-start items-start mt-10">
+      <DialogContent className="w-full h-screen !max-w-[70vw] flex flex-col justify-start items-start mt-10 overflow-y-scroll">
         <h1 className='text-2xl font-bold mb-4'>Add New Question</h1>
         <div className="flex w-full gap-6">
           {/* Left Column */}
