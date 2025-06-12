@@ -14,6 +14,14 @@ import FolderComponent from '@/components/contentComponents/FolderComponent'
 import ImportBtn from '@/components/contentComponents/importBtn'
 import { DataTableDemo } from '@/components/DataTableDemo'
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb'
+
 const ContentPage = () => {
   const [selectedPaper, setSelectedPaper] = useState(null)
   const [selectedSubject, setSelectedSubject] = useState(null)
@@ -86,6 +94,67 @@ const ContentPage = () => {
     setSelectedModule(module)
   }
 
+  const renderBreadcrumb = () => (
+    <Breadcrumb className="mb-4">
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink
+            href="#"
+            onClick={() => {
+              setSelectedPaper(null)
+              setSelectedSubject(null)
+              setSelectedModule(null)
+            }}
+          >
+            Papers
+          </BreadcrumbLink>
+        </BreadcrumbItem>
+
+        {selectedPaper && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                href="#"
+                onClick={() => {
+                  setSelectedSubject(null)
+                  setSelectedModule(null)
+                }}
+              >
+                {selectedPaper.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
+        )}
+
+        {selectedSubject && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink
+                href="#"
+                onClick={() => {
+                  setSelectedModule(null)
+                }}
+              >
+                {selectedSubject.name}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
+        )}
+
+        {selectedModule && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="#">{selectedModule.name}</BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
+        )}
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
+
   const renderFolders = () => {
     if (isPapersLoading) return <div>Loading papers...</div>
     if (isPapersError) return <div>Error loading papers: {papersError.message}</div>
@@ -136,6 +205,7 @@ const ContentPage = () => {
 
   return (
     <div className='h-full w-full lg:p-10 p-5'>
+      {renderBreadcrumb()}
       <div className="h-auto w-full flex flex-wrap gap-4 items-start">
         {renderFolders()}
         <AddNewModule />
@@ -144,7 +214,7 @@ const ContentPage = () => {
         <AddQuestion />
         <ImportBtn />
       </div>
-      <DataTableDemo />
+      {/* <DataTableDemo /> */}
     </div>
   )
 }
