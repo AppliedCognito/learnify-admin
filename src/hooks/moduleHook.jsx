@@ -27,14 +27,13 @@ const useAddModule = () => {
   });
 };
 
-// Update a module by ID (name and subject_id are required)
 const useUpdateModule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, name, subject_id }) =>
+    mutationFn: ({ id, updatedData }) =>
       toast.promise(
-        apiClient.put(`/modules/${id}`, { name, subject_id }).then(res => res.data),
+        apiClient.put(`/modules/${id}`, updatedData).then(res => res.data),
         {
           pending: 'Updating module...',
           success: 'Module updated successfully!',

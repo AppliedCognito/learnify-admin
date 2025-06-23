@@ -68,6 +68,13 @@ const AddNewModule = ({ selectedPaper, selectedSubject, selectedModule }) => {
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter name"
             className="w-full"
+            onKeyDown={
+            (e)=>{
+              if(e.key == 'Enter'){
+                handleCreate()
+              }
+            }
+          }
           />
           <div className="flex justify-end gap-3">
             <Button
