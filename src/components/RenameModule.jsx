@@ -55,7 +55,13 @@ const RenameModule = ({ open, setOpen, paper, type, parentId }) => {
           <DialogTitle>Rename {type}</DialogTitle>
         </DialogHeader>
         <div className="h-auto w-auto">
-          <Input value={name} onChange={(e) => setName(e.target.value)} />
+          <Input value={name} onChange={(e) => setName(e.target.value)} onKeyDown={
+            (e)=>{
+              if(e.key == 'Enter'){
+                handleRename()
+              }
+            }
+          }/>
         </div>
         <div className="h-auto w-full flex justify-end gap-3 items-end">
           <Button className="bg-transparent text-purple-700 hover:bg-white" onClick={() => setOpen(false)}>Cancel</Button>
