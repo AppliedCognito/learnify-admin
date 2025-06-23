@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,9 +9,17 @@ import MainInput from "@/components/contentComponents/MainInput";
 import SelectInput from "@/components/contentComponents/SelectInput";
 import { Plus } from "lucide-react";
 import { useAddQuestion } from "@/hooks/questionHook";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getPapers,
+  getSubjects,
+  getModules,
+  getsSubModule,
+} from "@/api/adminApi";
 
 const AddQuestion = () => {
   const { mutate: addQuestion } = useAddQuestion();
+
   const [formData, setFormData] = useState({
     text: "",
     img_url: "",
@@ -25,6 +33,35 @@ const AddQuestion = () => {
     subject_id: "",
     module_id: "",
     sub_module_id: "",
+  });
+
+  const [selectedPaper, setSelectedPaper] = useState(null);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
+  const [selectedSubModule, setSelectedSubModule] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const { data: papers = [] } = useQuery({
+    queryKey: ["papers"],
+    queryFn: getPapers,
+  });
+
+  const { data: subjects = [] } = useQuery({
+    queryKey: ["subjects", selectedPaper?._id],
+    queryFn: () => selectedPaper ? getSubjects(selectedPaper._id) : Promise.resolve([]),
+    enabled: !!selectedPaper,
+  });
+
+  const { data: modules = [] } = useQuery({
+    queryKey: ["modules", selectedSubject?._id],
+    queryFn: () => selectedSubject ? getModules(selectedSubject._id) : Promise.resolve([]),
+    enabled: !!selectedSubject,
+  });
+
+  const { data: submodules = [] } = useQuery({
+    queryKey: ["submodules", selectedModule?._id],
+    queryFn: () => selectedModule ? getsSubModule(selectedModule._id) : Promise.resolve([]),
+    enabled: !!selectedModule,
   });
 
   const handleChange = (field, value) => {
@@ -44,10 +81,24 @@ const AddQuestion = () => {
     if (cleanData.options?.every(opt => opt === "")) delete cleanData.options;
     if (cleanData.correct_option_index === "") delete cleanData.correct_option_index;
     addQuestion(cleanData);
+    setOpen(false)
   };
 
+  // Sync selected dropdowns with formData
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      paper_id: selectedPaper?._id || "",
+      subject_id: selectedSubject?._id || "",
+      module_id: selectedModule?._id || "",
+      sub_module_id: selectedSubModule?._id || "",
+    }));
+  }, [selectedPaper, selectedSubject, selectedModule, selectedSubModule]);
+
+  
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className='bg-black text-white hover:bg-gray-800'>
           <Plus /> Add New Question
@@ -89,7 +140,7 @@ const AddQuestion = () => {
           {/* Right Column */}
           <div className="w-1/2 flex flex-col gap-4">
             <MainInput title="Year" placeholder="2025" value={formData.year} onChange={val => handleChange("year", parseInt(val))} />
-            
+
             <SelectInput
               title="Difficulty"
               sampleSelectLabel="Select Difficulty"
@@ -103,10 +154,56 @@ const AddQuestion = () => {
             />
 
             <MainInput title="Tags" placeholder="Comma-separated tags" value={formData.tags} onChange={val => handleChange("tags", val)} />
-            <MainInput title="Paper ID" placeholder="paper_id" value={formData.paper_id} onChange={val => handleChange("paper_id", val)} />
-            <MainInput title="Subject ID" placeholder="subject_id" value={formData.subject_id} onChange={val => handleChange("subject_id", val)} />
-            <MainInput title="Module ID" placeholder="module_id" value={formData.module_id} onChange={val => handleChange("module_id", val)} />
-            <MainInput title="Sub Module ID" placeholder="sub_module_id" value={formData.sub_module_id} onChange={val => handleChange("sub_module_id", val)} />
+
+            <SelectInput
+              title="Paper"
+              sampleSelectLabel="Select Paper"
+              options={papers.map(p => ({ label: p.name, value: p._id }))}
+              value={selectedPaper?._id || ""}
+              onChange={val => {
+                const selected = papers.find(p => p._id === val);
+                setSelectedPaper(selected);
+                setSelectedSubject(null);
+                setSelectedModule(null);
+                setSelectedSubModule(null);
+              }}
+            />
+
+            <SelectInput
+              title="Subject"
+              sampleSelectLabel="Select Subject"
+              options={subjects.map(s => ({ label: s.name, value: s._id }))}
+              value={selectedSubject?._id || ""}
+              onChange={val => {
+                const selected = subjects.find(s => s._id === val);
+                setSelectedSubject(selected);
+                setSelectedModule(null);
+                setSelectedSubModule(null);
+              }}
+            />
+
+            <SelectInput
+              title="Module"
+              sampleSelectLabel="Select Module"
+              options={modules.map(m => ({ label: m.name, value: m._id }))}
+              value={selectedModule?._id || ""}
+              onChange={val => {
+                const selected = modules.find(m => m._id === val);
+                setSelectedModule(selected);
+                setSelectedSubModule(null);
+              }}
+            />
+
+            <SelectInput
+              title="Sub Module"
+              sampleSelectLabel="Select Sub Module"
+              options={submodules.map(sm => ({ label: sm.name, value: sm._id }))}
+              value={selectedSubModule?._id || ""}
+              onChange={val => {
+                const selected = submodules.find(sm => sm._id === val);
+                setSelectedSubModule(selected);
+              }}
+            />
 
             <Button className="mt-4 bg-green-600 hover:bg-green-700 text-white" onClick={handleSubmit}>
               Submit
