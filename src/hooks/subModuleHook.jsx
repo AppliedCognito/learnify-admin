@@ -32,9 +32,9 @@ const useUpdateSubModule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, name }) =>
+    mutationFn: ({ id, updatedData }) =>
       toast.promise(
-        apiClient.put(`/submodules/${id}`, { name }).then(res => res.data),
+        apiClient.put(`/submodules/${id}`, updatedData).then(res => res.data),
         {
           pending: 'Updating submodule...',
           success: 'Submodule updated successfully!',
@@ -50,6 +50,7 @@ const useUpdateSubModule = () => {
     },
   });
 };
+
 
 // Delete a submodule by ID
 const useDeleteSubModule = () => {

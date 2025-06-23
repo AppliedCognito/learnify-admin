@@ -28,13 +28,14 @@ const useAddSubject = () => {
 };
 
 // Update a subject by ID (only name is required)
+// subjectHook.jsx
 const useUpdateSubject = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, name }) =>
+    mutationFn: ({ id, updatedData }) =>
       toast.promise(
-        apiClient.put(`/subjects/${id}`, { name }).then(res => res.data),
+        apiClient.put(`/subjects/${id}`, updatedData).then(res => res.data),
         {
           pending: 'Updating subject...',
           success: 'Subject updated successfully!',
@@ -50,6 +51,7 @@ const useUpdateSubject = () => {
     },
   });
 };
+
 
 // Delete a subject by ID
 const useDeleteSubject = () => {
