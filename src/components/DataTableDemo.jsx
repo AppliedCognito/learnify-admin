@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   flexRender,
@@ -10,7 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
-import { Edit, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react" // Edit icon is now in EditQuestion
 import { useQuery } from "@tanstack/react-query"
 
 import { getQuestions } from "@/api/adminApi"
@@ -35,75 +33,135 @@ import {
 } from "@/components/ui/table"
 
 import { useDeleteQuestion } from "@/hooks/questionHook"
+import EditQuestion from "./contentComponents/EditQuestion"
 
 
 export function DataTableDemo() {
   const columns = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "text",
-    header: "Question",
-    cell: ({ row }) => <div>{row.getValue("text")}</div>,
-  },
-  {
-    accessorKey: "options",
-    header: "Options",
-    cell: ({ row }) => {
-      const options = row.original.options
-      return (
-        <ul className="list-disc pl-5 space-y-1">
-          {options.map((opt) => (
-            <li
-              key={opt._id}
-              className={
-                opt._id === row.original.correct_option_id
-                  ? "font-semibold text-green-600"
-                  : ""
-              }
-            >
-              {opt.option_text}
-            </li>
-          ))}
-        </ul>
-      )
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Created At",
-    cell: ({ row }) => new Date(row.getValue("createdAt")).toLocaleDateString(),
-  },
-  {
-    accessorKey: "correct_option_id",
-    header: "Correct Option ID",
-    cell: ({ row }) => <div>{row.getValue("correct_option_id")}</div>,
-  },
-  {
+    {
+      accessorKey: "_id",
+      header: "ID",
+      cell: ({ row }) => <div>{row.getValue("_id")}</div>,
+    },
+    {
+      accessorKey: "text",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Question
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("text")}</div>,
+    },
+    {
+        accessorKey: "img_url",
+        header: "Image URL",
+        cell: ({ row }) => <div>{row.getValue("img_url")}</div>,
+    },
+    {
+        accessorKey: "paper_id",
+        header: "Paper ID",
+        cell: ({ row }) => <div>{row.getValue("paper_id")}</div>,
+    },
+    {
+        accessorKey: "subject_id",
+        header: "Subject ID",
+        cell: ({ row }) => <div>{row.getValue("subject_id")}</div>,
+    },
+    {
+        accessorKey: "year",
+        header: "Year",
+        cell: ({ row }) => <div>{row.getValue("year")}</div>,
+    },
+    {
+        accessorKey: "difficulty",
+        header: "Difficulty",
+        cell: ({ row }) => <div>{row.getValue("difficulty")}</div>,
+    },
+    {
+        accessorKey: "explanation",
+        header: "Explanation",
+        cell: ({ row }) => <div>{row.getValue("explanation")}</div>,
+    },
+    {
+      accessorKey: "options",
+      header: "Options",
+      cell: ({ row }) => {
+        const options = row.original.options;
+        return (
+          <ul className="list-disc pl-5 space-y-1">
+            {options.map((opt, index) => (
+              <li
+                key={opt._id}
+                className={
+                  opt._id === row.original.correct_option_id
+                    ? "font-semibold text-green-600"
+                    : ""
+                }
+              >
+                {opt.option_text}
+              </li>
+            ))}
+          </ul>
+        );
+      },
+    },
+    {
+      accessorKey: "correct_option_id",
+      header: "Correct Option ID",
+      cell: ({ row }) => <div>{row.getValue("correct_option_id")}</div>,
+    },
+    {
+        accessorKey: "createdAt",
+        header: "Created At",
+        cell: ({ row }) =>
+          new Date(row.getValue("createdAt")).toLocaleDateString(),
+      },
+      {
+        accessorKey: "updatedAt",
+        header: "Updated At",
+        cell: ({ row }) =>
+          new Date(row.getValue("updatedAt")).toLocaleDateString(),
+      },
+      {
+        accessorKey: "__v",
+        header: "Version",
+        cell: ({ row }) => <div>{row.getValue("__v")}</div>,
+    },
+    {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
         const question = row.original;
+        const deleteQuestionMutation = useDeleteQuestion();
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -114,9 +172,8 @@ export function DataTableDemo() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => console.log("Edit", question._id)}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  <EditQuestion questionId={question._id} />
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => deleteQuestionMutation.mutate(question._id)}
@@ -128,8 +185,8 @@ export function DataTableDemo() {
           </DropdownMenu>
         );
       },
-  },
-]
+    },
+  ];
   const {
     data: questions = [],
     isLoading,
@@ -137,14 +194,12 @@ export function DataTableDemo() {
   } = useQuery({
     queryKey: ["questions"],
     queryFn: getQuestions,
-  })
+  });
 
-  const [sorting, setSorting] = React.useState([])
-  const [columnFilters, setColumnFilters] = React.useState([])
-  const [columnVisibility, setColumnVisibility] = React.useState({})
-  const [rowSelection, setRowSelection] = React.useState({})
-  const deleteQuestionMutation = useDeleteQuestion();
-
+  const [sorting, setSorting] = React.useState([]);
+  const [columnFilters, setColumnFilters] = React.useState([]);
+  const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
     data: questions || [],
@@ -163,7 +218,7 @@ export function DataTableDemo() {
       columnVisibility,
       rowSelection,
     },
-  })
+  });
 
   return (
     <div className="w-full">

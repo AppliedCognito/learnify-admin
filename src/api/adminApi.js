@@ -17,6 +17,17 @@ const getQuestions = async () => {
     return response.data;
 };
 
+const getQuestionById = async (id) => {
+  try {
+    const response = await apiClient.get(`/questions/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch question by ID:', error);
+    throw error;
+  }
+};
+
+
 const getModules = async (subject_id) => {
     const response = await apiClient.get(`/modules`, {
         params: { subject_id }
@@ -39,5 +50,6 @@ export {
     getQuestions,
     getSubjects,
     getModules,
-    getsSubModule
+    getsSubModule,
+    getQuestionById
 };
